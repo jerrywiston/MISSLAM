@@ -44,28 +44,28 @@ int main(){
         cv::drawMatches(img1, kp1, img2, kp2, matches, img_matches);
 
         // [Recover Essential Matrix]
-        cv::Mat funMat = misslam::vo::GetFundamentalMatrix(matches, kp1, kp2);
+        cv::Mat funMat = vo::GetFundamentalMatrix(matches, kp1, kp2);
         cv::Mat essMat = cameraMat.t() * funMat * cameraMat;
         //cout << essMat << endl;
 
         // [Transform Extraction]
         cv::Mat R, T;
-        misslam::vo::ExtractRT(essMat, R, T);
+        vo::ExtractRT(essMat, R, T);
         //cout << R << endl;
         //cout << T << endl;
 
         // [Triangulate 3D Structure]
-        float temp2[12] = {1,0,0,0,0,1,0,0,0,0,1,0};
+        misslam::real temp2[12] = {1,0,0,0,0,1,0,0,0,0,1,0};
         cv::Mat M1 = cv::Mat(3, 4, CV_REAL, temp2);
         cv::Mat M2 = utils::ExtrinsicMatrixByRT(R,T);
         std::vector<Point3> points3d;
-        std::vector<int> idx1 (kp1.size(), -1);
-        std::vector<int> idx2 (kp2.size(), -1);
-        misslam::vo::InitialStructure(
+        std::vector<i32> idx1 (kp1.size(), -1);
+        std::vector<i32> idx2 (kp2.size(), -1);
+        vo::InitialStructure(
             M1, M2, cameraMat, cameraMat, matches, 
             kp1, kp2, idx1, idx2, points3d);
         
-        for(int i=0; i<points3d.size(); i++)
+        for(i32 i=0; i<points3d.size(); i++)
             cout << points3d[i] << endl;
         
         // [Insert Keyframes]
