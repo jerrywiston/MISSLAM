@@ -9,12 +9,26 @@
 namespace misslam {
 
 namespace vo {
+    /*
+    * Compute fundamental matrix from matches
+    * @param [in] matches vector of DMatch
+    * @param [out] kp1 vector of query keypoints
+    * @param [out] kp2 vector of train keypoints
+    * @return Fundamental matrix
+    */
     cv::Mat GetFundamentalMatrix(
         std::vector<cv::DMatch> matches, 
         std::vector<cv::KeyPoint> kp1, 
         std::vector<cv::KeyPoint> kp2
     );
 
+    /*
+    * Extract transform from essential matrix
+    * @param [in] essential matrix
+    * @param [out] R rotation
+    * @param [out] T translate
+    * @return Singular value matrix
+    */
     cv::Mat ExtractRT(
         cv::Mat essMat, 
         cv::Mat &R, 
