@@ -32,11 +32,11 @@ int main(){
         
         // Initialization
         // [Extract ORB Features]
-        cv::ORB orb;
+        cv::Ptr<cv::ORB> orb = cv::ORB::create();
         std::vector<cv::KeyPoint> kp1, kp2;
         cv::Mat dp1, dp2;
-        orb(img1, cv::Mat(), kp1, dp1);
-        orb(img2, cv::Mat(), kp2, dp2);
+        orb->detectAndCompute(img1, cv::Mat(), kp1, dp1);
+        orb->detectAndCompute(img2, cv::Mat(), kp2, dp2);
         std::vector<cv::DMatch> matches = utils::ORBMatch(dp1, dp2);
 
         printf("<Frame %s / %s> Matches: %d\n", utils::Zfill(i,3).c_str(), utils::Zfill(i+1,3).c_str(), (int)matches.size());
