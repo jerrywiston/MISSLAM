@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 project( VOtest )
 add_definitions(-std=c++11)
 find_package( OpenCV REQUIRED )
-find_package (Eigen3 3.3 REQUIRED NO_MODULE)
+find_package (Eigen3 REQUIRED NO_MODULE)
 
 file(GLOB SOURCE ./src/*.cpp)
 file(GLOB HEADER ./src/*.h)
