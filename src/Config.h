@@ -31,12 +31,6 @@ namespace misslam {
 using Point3 = Vector3<real>;
 using Point2 = Vector2<real>;
 
-/*
-Point2 &lhs operator=(Point2 &lhs, const cv::Point2d &rhs) {
-    
-    return lhs;
-}*/
-
 static constexpr real operator "" _r(long double val) {
     return static_cast<real>(val);
 }
