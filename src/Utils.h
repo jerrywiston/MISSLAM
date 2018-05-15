@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include <cstdint>
+#include <functional>
 #include "Config.h"
 
 namespace misslam {
@@ -31,6 +32,23 @@ namespace utils {
     */
     cv::Mat ExtrinsicMatrixByRT(cv::Mat R, cv::Mat T);
     cv::Mat CrossMatrix(float a0, float a1, float a2);
+    void ArrangeMatchPoints(const std::vector<cv::KeyPoint> &q, const std::vector<cv::KeyPoint> &t,
+        const std::vector<cv::DMatch> &matches,
+        std::vector<Point2> &query, std::vector<Point2> &train);
+    void ToNormalizedSpace(const cv::Mat &K, std::vector<Point2> &image_points);
+
+    struct Election{
+        i32 idx;
+        u32 score;        
+    };
+    
+    class Voter {
+    public:
+        void push(std::function<u32 ()> evalFunc);
+        Election elect() const;
+    private:
+        std::vector<std::function<u32 ()>> candidates;
+    };
 }
 }
 

@@ -24,7 +24,7 @@ namespace vo {
 
     /*
     * Extract transform from essential matrix
-    * @param [in] essential matrix
+    * @param [in] essMat essential matrix
     * @param [out] R rotation
     * @param [out] T translate
     * @return Singular value matrix
@@ -34,13 +34,18 @@ namespace vo {
         cv::Mat &R, 
         cv::Mat &T
     );
-    
-    cv::Mat Triangulate(
-        cv::Mat M1, cv::Mat M2, 
-        cv::Mat K1, cv::Mat K2,
-        std::vector<cv::DMatch> &matches,
-        std::vector<cv::KeyPoint> &kp1, std::vector<cv::KeyPoint> &kp2,
-        std::vector<Point3> &points3d
+
+    /*
+    * Extract transform from essential matrix
+    * @param [in] M1 camera 1 extrinsic
+    * @param [in] M2 camera 2 extrinsic
+    * @param [in]  p1 normalized image coordinate
+    * @param [in]  p2 normalized image coordinate 
+    * @return position related to world space
+    */
+    Point3 Triangulate1Point(
+        cv::Mat &M1, cv::Mat &M2,
+        cv::Mat &p1, cv::Mat &p2
     );
 
     void InitialStructure(

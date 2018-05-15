@@ -19,14 +19,14 @@ std::vector<cv::DMatch> ORBMatch(cv::Mat dp1, cv::Mat dp2){
     double max_dist = 0; double min_dist = 100;
     for( int i = 0; i < dp1.rows; i++ )
 	{ 
-	    double dist = matches[i].distance;
+	    float dist = matches[i].distance;
 		if( dist < min_dist ) min_dist = dist;
 		if( dist > max_dist ) max_dist = dist;
 	}
 
     std::vector< cv::DMatch > good_matches;
 	for( int i = 0; i < dp1.rows; i++ )
-		if( matches[i].distance < 0.5*max_dist )
+		if( matches[i].distance < 0.5_r*max_dist )
 			good_matches.push_back( matches[i]);
     
     return good_matches;
@@ -60,7 +60,42 @@ cv::Mat CrossMatrix(float a0, float a1, float a2){
     return out.clone();
 }
 
+void ArrangeMatchPoints(const std::vector<cv::KeyPoint> &q, const std::vector<cv::KeyPoint> &t,
+    const std::vector<cv::DMatch> &matches,
+    std::vector<Point2> &query, std::vector<Point2> &train)
+{
+    query.resize(matches.size());
+    train.resize(matches.size());
+    for(u32 i=0; i<matches.size(); i++) {
+        query[i] = q[matches[i].queryIdx].pt;
+        train[i] = t[matches[i].trainIdx].pt;
+    }
+}
 
+void ToNormalizedSpace(const cv::Mat &K, std::vector<Point2> &image_points)
+{
+    Matrix3 kinv(K.inv());
+    for(u32 i=0; i<image_points.size(); i++) {
+        image_points[i] = (kinv * Vector3(image_points[i].x, image_points[i].y, 1.0_r)).xy();
+    }
+}
+
+void Voter::push(std::function<u32 ()> func) {
+    candidates.push_back(func);
+}
+
+Election Voter::elect() const {
+    i32 maxone=-1;
+    u32 score;
+    for(i32 i=0; i<candidates.size(); i++) {
+        u32 sc = candidates[i]();
+        if (maxone==-1 || score < sc) {
+            score = sc;
+            maxone = i;
+        }
+    }
+    return {maxone, score};
+}
 
 }
 }

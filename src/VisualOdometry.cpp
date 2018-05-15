@@ -44,14 +44,14 @@ namespace vo{
         return W;
     }
 
-    cv::Mat Triangulate1Point(
-        cv::Mat M1, cv::Mat M2,
-        cv::Mat K1, cv::Mat K2, 
-        cv::Mat pp1, cv::Mat pp2
+    Point3 Triangulate1Point(
+        cv::Mat &M1, cv::Mat &M2,
+        cv::Mat &p1, cv::Mat &p2
     ){
         // Construct matrix
-        cv::Mat p1 = K1 * pp1;
-        cv::Mat p2 = K2 * pp2;
+        // assume pi in normalized space
+        //cv::Mat p1 = K1 * pp1;
+        //cv::Mat p2 = K2 * pp2;
         cv::Mat p1x = misslam::utils::CrossMatrix(p1.at<real>(0), p1.at<real>(1), p1.at<real>(2));
         cv::Mat p2x = misslam::utils::CrossMatrix(p2.at<real>(0), p2.at<real>(1), p2.at<real>(2));
         cv::Mat A;
@@ -64,9 +64,9 @@ namespace vo{
         cv::Mat VT = computeSVD.vt;
         cv::Mat P = VT.t().col(3);
         P = P / P.at<real>(3);
-        return P;
+        return {P.at<real>(0), P.at<real>(1), P.at<real>(2)};
     }
-
+/*
     void InitialStructure(
         cv::Mat M1, cv::Mat M2, 
         cv::Mat K1, cv::Mat K2,
@@ -77,7 +77,7 @@ namespace vo{
     ){     
         idx1 = std::vector<i32>(kp1.size(), -1);
         idx2 = std::vector<i32>(kp2.size(), -1);
-        points3d.resize(kp1.size());
+        points3d.resize(matches.size());
 
         i32 count = 0;
         for(i32 i=0;i<matches.size();i++)
@@ -92,7 +92,7 @@ namespace vo{
             points3d[i] = Point3(P.at<real>(0), P.at<real>(1), P.at<real>(2));
             ++count;
         }
-    }
+    }*/
 
     cv::Mat Init()
     {
