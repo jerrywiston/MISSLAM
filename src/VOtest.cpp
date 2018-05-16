@@ -21,15 +21,12 @@ const cv::Mat cameraMat = cam::KinectCamera.cvCameraMatrix();
 
 u32 candidate(const cv::Mat &R, const cv::Mat &T, const std::vector<Point2> &qpts, const std::vector<Point2> &tpts)
 {
-    std::cout << T << std::endl;
     misslam::real temp2[12] = {1,0,0,0,0,1,0,0,0,0,1,0};
     cv::Mat M1 = cv::Mat(3, 4, CV_REAL, temp2);
     cv::Mat M2 = utils::ExtrinsicMatrixByRT(R, T);
-    std::cout << T << std::endl;
     u32 passed = 0;
     for (i32 i=0; i<100; i++) {
         passed += static_cast<u32>(vo::Triangulate1Point(M1, M2, qpts[i], tpts[i]).z > 0);
-        break;
     }
     
     return passed;
@@ -84,24 +81,24 @@ int main(){
         utils::ArrangeMatchPoints(kp1, kp2, matches, q, t);
         utils::ToNormalizedSpace(cameraMat, q, -1);
         utils::ToNormalizedSpace(cameraMat, t, -1);
-        vo::VoteRT(R1,R2,T1,T2,q,t);
-        //utils::Voter voter;
+        //vo::VoteRT(R1,R2,T1,T2,q,t);
+        utils::Voter voter;
         
-        //printf("%u\n", candidate(R1, T1, q, t));
-        //auto func1 = std::bind(candidate, std::ref(R1), std::ref(T1), std::ref(q), std::ref(t));
-        //auto func2 = std::bind(candidate, std::ref(R1), std::ref(T2), std::ref(q), std::ref(t));
-        //auto func3 = std::bind(candidate, std::ref(R2), std::ref(T1), std::ref(q), std::ref(t));
-        //auto func4 = std::bind(candidate, std::ref(R2), std::ref(T2), std::ref(q), std::ref(t));
-        //printf("%u\n", func1());
-
-
+        printf("%u\n", candidate(R1, T1, q, t));
+        printf("%u\n", candidate(R1, T2, q, t));
+        printf("%u\n", candidate(R2, T1, q, t));
+        printf("%u\n", candidate(R2, T2, q, t));
+        auto func1 = std::bind(candidate, std::ref(R1), std::ref(T1), std::ref(q), std::ref(t));
+        auto func2 = std::bind(candidate, std::ref(R1), std::ref(T2), std::ref(q), std::ref(t));
+        auto func3 = std::bind(candidate, std::ref(R2), std::ref(T1), std::ref(q), std::ref(t));
+        auto func4 = std::bind(candidate, std::ref(R2), std::ref(T2), std::ref(q), std::ref(t));
         
-        //voter.push(func1);
-        //voter.push(func2);
-        //voter.push(func3);
-        //voter.push(func4);
-        //auto result = voter.elect();
-        //printf("result: %d %d\n", result.idx, result.score);
+        voter.push(func1);
+        voter.push(func2);
+        voter.push(func3);
+        voter.push(func4);
+        auto result = voter.elect();
+        printf("result: %d %d\n", result.idx, result.score);
     
         // Get Correct RT
         cv::Mat R;
