@@ -4,6 +4,7 @@
 #include <opencv2/opencv.hpp>
 #include <vector>
 #include <string>
+#include <tuple>
 #include <cstdint>
 #include <functional>
 #include "Config.h"
@@ -32,10 +33,12 @@ namespace utils {
     */
     cv::Mat ExtrinsicMatrixByRT(cv::Mat R, cv::Mat T);
     cv::Mat CrossMatrix(float a0, float a1, float a2);
+    
     void ArrangeMatchPoints(const std::vector<cv::KeyPoint> &q, const std::vector<cv::KeyPoint> &t,
         const std::vector<cv::DMatch> &matches,
         std::vector<Point2> &query, std::vector<Point2> &train);
-    void ToNormalizedSpace(const cv::Mat &K, std::vector<Point2> &image_points);
+    void ToNormalizedSpace(const cv::Mat &K, std::vector<Point2> &image_points, u32 count=-1);
+
 
     struct Election{
         i32 idx;

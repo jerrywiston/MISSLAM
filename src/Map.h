@@ -5,25 +5,14 @@
 #include <vector>
 #include <Eigen/Eigen>
 #include "Config.h"
+#include "Map.h"
 
 namespace misslam {
 
 namespace map {
 struct KeyFrameNode {
-    KeyFrameNode(
-        int id, 
-        std::vector<cv::KeyPoint> kps, 
-        cv::Mat desc, 
-        std::vector<int> kpids
-    ){
-        KeyFrameId = id;
-        keyPoints = kps;
-        descriptor = desc;
-        keyPointIndices = kpids;
-    };
-
     int KeyFrameId;
-    std::vector<cv::KeyPoint> keyPoints;
+    std::vector<Point2> keyPoints;
     cv::Mat descriptor;
     /** @brief  */
     cv::Mat mask;

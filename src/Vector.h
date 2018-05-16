@@ -38,6 +38,10 @@ namespace misslam {
             return {x, y};
         }
 
+        TVector3<T> operator *(T scalar) {
+            return {x*scalar, y*scalar, z*scalar};
+        }
+
         template <class S>
         TVector3<T> operator =(const S &cvpoint) {
             x = cvpoint.x;
