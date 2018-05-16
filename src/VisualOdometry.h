@@ -4,6 +4,7 @@
 #include <opencv2/opencv.hpp>
 #include <vector>
 #include <string>
+#include "Map.h"
 #include "Config.h"
 
 namespace misslam {
@@ -29,10 +30,10 @@ namespace vo {
     * @param [out] T translate
     * @return Singular value matrix
     */
-    cv::Mat ExtractRT(
-        cv::Mat essMat, 
-        cv::Mat &R, 
-        cv::Mat &T
+    void ExtractRT(
+        const cv::Mat essMat, 
+        cv::Mat &R1, cv::Mat &R2,
+        cv::Mat &T1, cv::Mat &T2
     );
 
     /*
@@ -44,18 +45,16 @@ namespace vo {
     * @return position related to world space
     */
     Point3 Triangulate1Point(
-        cv::Mat &M1, cv::Mat &M2,
-        cv::Mat &p1, cv::Mat &p2
+        const cv::Mat &M1, const cv::Mat &M2,
+        const Point2 &p1, const Point2 &p2
     );
 
-    void InitialStructure(
-        cv::Mat M1, cv::Mat M2, 
-        cv::Mat K1, cv::Mat K2,
-        std::vector<cv::DMatch> &matches,
-        std::vector<cv::KeyPoint> &kp1, std::vector<cv::KeyPoint> &kp2,
-        std::vector<int> &idx1, std::vector<int> &idx2,
-        std::vector<Point3> &points3d
-    );
+    void VoteRT(const cv::Mat R1, const cv::Mat R2, 
+        const cv::Mat T1, const cv::Mat T2, 
+        const std::vector<Point2> &qpts, const std::vector<Point2> &tpts);
+
+
+    std::tuple<map::KeyFrameNode, map::KeyFrameNode> InitialStructure();
 }
 
 }

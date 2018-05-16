@@ -39,13 +39,16 @@ cv::Mat ExtrinsicMatrixByRT(cv::Mat R, cv::Mat T){
         R.at<float>(2,0), R.at<float>(2,1), R.at<float>(2,2), T.at<float>(2),
         0, 0, 0, 1
     };
+
     cv::Mat H = cv::Mat(4, 4, CV_REAL, temp);
     cv::Mat A = H.inv();
+    
     float temp2[12] = {
         A.at<float>(0,0), A.at<float>(0,1), A.at<float>(0,2), A.at<float>(0,3),
         A.at<float>(1,0), A.at<float>(1,1), A.at<float>(1,2), A.at<float>(1,3),
-        A.at<float>(2,0), A.at<float>(2,1), A.at<float>(2,2), A.at<float>(2,3),
+        A.at<float>(2,0), A.at<float>(2,1), A.at<float>(2,2), A.at<float>(2,3)
     };
+
     cv::Mat M = cv::Mat(3, 4, CV_REAL, temp2);
     return M.clone();
 }
@@ -72,10 +75,11 @@ void ArrangeMatchPoints(const std::vector<cv::KeyPoint> &q, const std::vector<cv
     }
 }
 
-void ToNormalizedSpace(const cv::Mat &K, std::vector<Point2> &image_points)
+void ToNormalizedSpace(const cv::Mat &K, std::vector<Point2> &image_points, u32 count)
 {
     Matrix3 kinv(K.inv());
-    for(u32 i=0; i<image_points.size(); i++) {
+    count = (count == -1 ? image_points.size() : std::min<u32>(count, image_points.size()));
+    for(u32 i=0; i<count; i++) {
         image_points[i] = (kinv * Vector3(image_points[i].x, image_points[i].y, 1.0_r)).xy();
     }
 }
