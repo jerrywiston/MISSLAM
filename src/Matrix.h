@@ -4,9 +4,11 @@
 #include <cstring>
 #include <cstdint>
 #include <opencv2/opencv.hpp>
-#include "Vector.h"
 
 namespace misslam {
+    template <class T>
+    class TVector3;
+
     template <class T>
     class TMatrix3 {
     public:
@@ -14,6 +16,12 @@ namespace misslam {
         : TMatrix3(T(1))
         {
 
+        }
+        TMatrix3(std::initializer_list<T> l) {
+            uint32_t idx = 0;
+            for(auto it=l.begin(); it!=l.end(); ++it) {
+                m[idx++] = *it;
+            }
         }
         explicit TMatrix3(T diag)
         {
@@ -35,10 +43,7 @@ namespace misslam {
         T *data()
         { return m; }
 
-        TVector3<T> operator*(const TVector3<T> &rhs) const
-        { 
-            return {dot(row(0), rhs), dot(row(1), rhs), dot(row(2), rhs)};
-        }
+        TVector3<T> operator*(const TVector3<T> &rhs) const;
 
         TVector3<T> row(uint32_t idx) const
         { return {m[idx*3], m[idx*3+1], m[idx*3+2]}; }
@@ -52,5 +57,7 @@ namespace misslam {
     using Matrix3f = TMatrix3<float>;
     using Matrix3d = TMatrix3<double>;
 }
+
+#include "Matrix.inl"
 
 #endif

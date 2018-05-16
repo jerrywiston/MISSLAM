@@ -22,6 +22,7 @@ const cv::Mat cameraMat = cam::KinectCamera.cvCameraMatrix();
 int main(){
     cv::namedWindow("test", cv::WINDOW_AUTOSIZE);
 
+    Matrix3 m = {1, 2, 3};
     misslam::real temp2[12] = {1,0,0,0,0,1,0,0,0,0,1,0};
     cv::Mat M1 = cv::Mat(3, 4, CV_REAL, temp2);
     auto candidate = [&M1] (cv::Mat R, cv::Mat T,  cv::Mat qpts, cv::Mat tpts) -> u32 {

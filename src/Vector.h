@@ -27,6 +27,9 @@ namespace misslam {
     struct TVector3 {
         T x, y, z;
         TVector3()=default;
+        TVector3(const TVector2<T> &v, T w)
+            : TVector3(v.x, v.y, w)
+        {}
         TVector3(T x, T y, T z)
             : x(x), y(y), z(z)
         {}
@@ -50,10 +53,6 @@ namespace misslam {
     static std::ostream &operator<<(std::ostream &out, const misslam::TVector3<T> &p) {
         return out << "Vector3(" << p.x << ", " << p.y << ", " << p.z << ")";
     }
-
-    template <class T>
-    static inline T dot(const TVector3<T> &lhs, const TVector3<T> &rhs)
-    { return lhs.x*rhs.x+lhs.y*rhs.y+lhs.z*rhs.z;}
 }
 
 #endif

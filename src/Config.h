@@ -4,8 +4,7 @@
 #include <cstdint>
 #include <opencv2/opencv.hpp>
 #include <Eigen/Eigen>
-#include "Vector.h"
-#include "Matrix.h"
+#include "Math.h"
 
 namespace misslam {
 
