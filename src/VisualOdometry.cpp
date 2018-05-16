@@ -42,12 +42,12 @@ namespace vo{
         cv::Mat S1 = U*ZMat*U.t();
         R1 = U*WMat*VT;
         real temp1[3] = {S1.at<real>(2,1), S1.at<real>(0,2), S1.at<real>(1,0)};
-        T1 = cv::Mat(3, 1, CV_REAL, temp1);
+        T1 = cv::Mat(3, 1, CV_REAL, temp1).clone();
 
         cv::Mat S2 = U*ZMat.t()*U.t();
         R2 = U*WMat.t()*VT;
         real temp2[3] = {S2.at<real>(2,1), S2.at<real>(0,2), S2.at<real>(1,0)};
-        T2 = cv::Mat(3, 1, CV_REAL, temp2);
+        T2 = cv::Mat(3, 1, CV_REAL, temp2).clone();
     }
 
     Point3 Triangulate1Point(
@@ -104,9 +104,6 @@ namespace vo{
         int count[4] = {0,0,0,0};
         for (i32 i=0; i<100; ++i){
             count[0] += static_cast<u32>(Triangulate1Point(M1, M2_1, qpts[i], tpts[i]).z > 0);
-            count[1] += static_cast<u32>(Triangulate1Point(M1, M2_2, qpts[i], tpts[i]).z > 0);
-            count[2] += static_cast<u32>(Triangulate1Point(M1, M2_3, qpts[i], tpts[i]).z > 0);
-            count[3] += static_cast<u32>(Triangulate1Point(M1, M2_4, qpts[i], tpts[i]).z > 0);
         }
 
         
