@@ -54,8 +54,40 @@ namespace misslam {
     using Vector3d = TVector3<double>;
 
     template <class T>
+    struct TVector4 {
+        T x, y, z, w;
+        TVector4()=default;
+        TVector4(const TVector3<T> &v, T w)
+            : TVector4(v.x, v.y, v.z, w)
+        {}
+        TVector4(T x, T y, T z, T w)
+            : x(x), y(y), z(z), w(w)
+        {}
+
+        TVector3<T> xyz() const {
+            return {x, y, z};
+        }
+
+        TVector2<T> xy() const {
+            return {x, y};
+        }
+
+        TVector4<T> operator *(T scalar) {
+            return {x*scalar, y*scalar, z*scalar, w*scalar};
+        }
+    };
+
+    using Vector4f = TVector4<float>;
+    using Vector4d = TVector4<double>;
+
+    template <class T>
     static std::ostream &operator<<(std::ostream &out, const misslam::TVector3<T> &p) {
         return out << "Vector3(" << p.x << ", " << p.y << ", " << p.z << ")";
+    }
+
+    template <class T>
+    static std::ostream &operator<<(std::ostream &out, const misslam::TVector4<T> &p) {
+        return out << "Vector4(" << p.x << ", " << p.y << ", " << p.z<<", "<<p.w<< ")";
     }
 }
 

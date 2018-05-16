@@ -17,7 +17,9 @@ namespace misslam {
     using cvPoint2 = cv::Point2d;
     using Vector2 = Vector2d;
     using Vector3 = Vector3d;
+    using Vector4 = Vector4d;
     using Matrix3 = Matrix3d;
+    using Matrix4 = Matrix4d;
     #define CV_REAL CV_64F
     #define CV_REAL_C1 CV_64FC1
     #define CV_REAL_C2 CV_64FC2
@@ -27,7 +29,9 @@ namespace misslam {
     using cvPoint2 = cv::Point2f;
     using Vector2 = Vector2f;
     using Vector3 = Vector3f;
+    using Vector4 = Vector4f;
     using Matrix3 = Matrix3f;
+    using Matrix4 = Matrix4f;
     #define CV_REAL CV_32F
     #define CV_REAL_C1 CV_32FC1
     #define CV_REAL_C2 CV_32FC2

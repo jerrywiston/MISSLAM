@@ -8,7 +8,10 @@ namespace misslam{
     namespace math {
         template <class T>
         static inline T Dot(const TVector3<T> &lhs, const TVector3<T> &rhs)
-        { return lhs.x*rhs.x+lhs.y*rhs.y+lhs.z*rhs.z;}
+        { return lhs.x*rhs.x+lhs.y*rhs.y+lhs.z*rhs.z; }
+        template <class T>
+        static inline T Dot(const TVector4<T> &lhs, const TVector4<T> &rhs)
+        { return lhs.x*rhs.x+lhs.y*rhs.y+lhs.z*rhs.z+lhs.w*rhs.w;}
 
         template <class T>
         static inline TMatrix3<T> CrossMatrix(const TVector3<T> &v)

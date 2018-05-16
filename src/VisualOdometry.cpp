@@ -59,16 +59,8 @@ namespace vo{
         cv::Mat p1x = utils::CrossMatrix(p1.x, p1.y, 1);
         cv::Mat p2x = utils::CrossMatrix(p2.x, p2.y, 1);
         
-        cv::Mat one = p1x*M1;
-        cv::Mat two = p2x*M2;
-        cv::Mat A(6,4,CV_REAL);
-        return {0,0,1};
-        std::memcpy(A.ptr<real>(), one.ptr<real>(), sizeof(real)*12);
-        std::memcpy(A.ptr<real>()+12, two.ptr<real>(), sizeof(real)*12);
-        
-        //cv::vconcat(p1x*M1, p2x*M2, A);
-        
-        //std::cout << A << std::endl;
+        cv::Mat A;
+        cv::vconcat(p1x*M1, p2x*M2, A);
         
         // Matrix decomposition
         cv::SVD computeSVD(A, cv::SVD::FULL_UV);
@@ -78,7 +70,7 @@ namespace vo{
         
         cv::Mat P = VT.t().col(3);
         P = P / P.at<real>(3);
-        //return {0,0,1};
+
         return {P.at<real>(0), P.at<real>(1), P.at<real>(2)};
     }
 
