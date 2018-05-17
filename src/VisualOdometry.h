@@ -49,11 +49,6 @@ namespace vo {
         const Point2 &p1, const Point2 &p2
     );
 
-    void VoteRT(const cv::Mat R1, const cv::Mat R2, 
-        const cv::Mat T1, const cv::Mat T2, 
-        const std::vector<Point2> &qpts, const std::vector<Point2> &tpts);
-
-
     std::tuple<map::KeyFrameNode, map::KeyFrameNode> InitialStructure();
 }
 

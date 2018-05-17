@@ -39,22 +39,21 @@ namespace vo{
         cv::Mat W = computeSVD.w;
         cv::Mat VT = computeSVD.vt;
 
-        cv::Mat S1 = U*ZMat*U.t();
+        cv::Mat Tx1 = U*ZMat*U.t();
         R1 = U*WMat*VT;
-        real temp1[3] = {S1.at<real>(2,1), S1.at<real>(0,2), S1.at<real>(1,0)};
+        real temp1[3] = {Tx1.at<real>(2,1), Tx1.at<real>(0,2), Tx1.at<real>(1,0)};
         T1 = cv::Mat(3, 1, CV_REAL, temp1).clone();
 
-        cv::Mat S2 = U*ZMat.t()*U.t();
+        cv::Mat Tx2 = U*ZMat.t()*U.t();
         R2 = U*WMat.t()*VT;
-        real temp2[3] = {S2.at<real>(2,1), S2.at<real>(0,2), S2.at<real>(1,0)};
+        real temp2[3] = {Tx2.at<real>(2,1), Tx2.at<real>(0,2), Tx2.at<real>(1,0)};
         T2 = cv::Mat(3, 1, CV_REAL, temp2).clone();
     }
 
     Point3 Triangulate1Point(
         const cv::Mat &M1, const cv::Mat &M2,
         const Point2 &p1, const Point2 &p2
-    ){
-        
+    ){       
         // Construct matrix
         cv::Mat p1x = utils::CrossMatrix(p1.x, p1.y, 1);
         cv::Mat p2x = utils::CrossMatrix(p2.x, p2.y, 1);
@@ -73,40 +72,6 @@ namespace vo{
 
         return {P.at<real>(0), P.at<real>(1), P.at<real>(2)};
     }
-
-    void VoteRT(const cv::Mat R1, const cv::Mat R2, 
-    const cv::Mat T1, const cv::Mat T2, 
-    const std::vector<Point2> &qpts, const std::vector<Point2> &tpts)
-    {
-        std::cout << endl;
-        std::cout << T1.t() << std::endl;
-        std::cout << T2.t() << std::endl;
-
-        misslam::real temp2[12] = {1,0,0,0,0,1,0,0,0,0,1,0};
-        cv::Mat M1 = cv::Mat(3, 4, CV_REAL, temp2);
-        cv::Mat M2_1 = utils::ExtrinsicMatrixByRT(R1,T1);
-        //cv::Mat M2_2 = utils::ExtrinsicMatrixByRT(R1,T2);
-        //cv::Mat M2_3 = utils::ExtrinsicMatrixByRT(R2,T1);
-        //cv::Mat M2_4 = utils::ExtrinsicMatrixByRT(R2,T2);
-
-        std::cout << endl;
-        std::cout << T1.t() << std::endl;
-        std::cout << T2.t() << std::endl;
-
-        int count[4] = {0,0,0,0};
-        for (i32 i=0; i<100; ++i){
-            count[0] += static_cast<u32>(Triangulate1Point(M1, M2_1, qpts[i], tpts[i]).z > 0);
-        }
-
-        
-
-        for (i32 i=0; i<4; ++i){
-            std::cout << count[i] << std::endl;
-        }
-
-
-
-    }   
 
     std::tuple<misslam::map::KeyFrameNode, misslam::map::KeyFrameNode> InitStructure()
     {

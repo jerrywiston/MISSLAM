@@ -3,6 +3,7 @@
 
 #include <opencv2/opencv.hpp>
 #include <vector>
+#include <array>
 #include <Eigen/Eigen>
 #include "Config.h"
 #include "Map.h"
@@ -13,16 +14,27 @@ namespace map {
 struct KeyFrameNode {
     int KeyFrameId;
     std::vector<Point2> keyPoints;
-    cv::Mat descriptor;
     /** @brief  */
     cv::Mat mask;
     std::vector<int> keyPointIndices;
 };
 
+template <class T, size_t N>
 struct GlobalState {
-    std::vector<Eigen::Vector3f> structure;
+    std::vector<StructurePoint<T, N>> structure;
     std::vector<KeyFrameNode> frameGraph;
 };
+
+struct LocalMap {
+    std::vector<u32> pidx; 
+    std::vector<std::array<T, N>> descriptors;
+};
+
+template <class T, size_t N>
+struct StructurePoint {
+    Point3 point;
+    std::array<T, N> descriptor;
+}
 
 }
 }

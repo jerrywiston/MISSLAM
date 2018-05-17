@@ -57,7 +57,7 @@ cv::Mat CrossMatrix(float a0, float a1, float a2){
     float temp[9] = {
         0, -a2, a1,
         a2, 0, -a0,
-        -a1, a0, 1,
+        -a1, a0, 0,
     };
     cv::Mat out = cv::Mat(3, 3, CV_REAL, temp);
     return out.clone();

@@ -31,12 +31,12 @@ u32 candidate(const cv::Mat &R, const cv::Mat &T, const std::vector<Point2> &qpt
     u32 passed = 0;
     for (i32 i=0; i<100; i++) {
         auto v = Vector4(vo::Triangulate1Point(M1, M2, qpts[i], tpts[i]), 1.0_r);
-        std::cout<<m1*v<<std::endl;
-        std::cout<<m2*v<<std::endl;
-        break;
+        //std::cout<<m1*v<<std::endl;
+        //std::cout<<m2*v<<std::endl;
+        //break;
         passed += static_cast<u32>((m1*v).z > 0 && (m2*v).z > 0);
     }
-    printf("passed: %d\n", passed);
+    //printf("passed: %d\n", passed);
     
     return passed;
 };
@@ -50,7 +50,7 @@ int main(){
     
 
     for(int i=0; i<500; ++i){
-        i = 0;
+        //i = 0;
         // Read Image
         std::string fn1 = std::string(DATA_PATH) + utils::Zfill(i,4) + ".png";
         std::string fn2 = std::string(DATA_PATH) + utils::Zfill(i+1,4) + ".png";
@@ -61,8 +61,7 @@ int main(){
         // [Extract ORB Features]
         cv::Ptr<cv::ORB> orb = cv::ORB::create();
         std::vector<cv::KeyPoint> kp1, kp2;
-        cv::Mat dp1, dp2;
-        cv::Mat mask1, mask2;
+        cv::Mat dp1, dp2, mask1, mask2;
         orb->detectAndCompute(img1, mask1, kp1, dp1);
         orb->detectAndCompute(img2, mask2, kp2, dp2);
         std::vector<cv::DMatch> matches = utils::ORBMatch(dp1, dp2);
@@ -79,10 +78,10 @@ int main(){
         // [Transform Extraction]
         cv::Mat R1, R2, T1, T2;
         vo::ExtractRT(essMat, R1, R2, T1, T2);
-        std::cout << R1 << std::endl;
-        std::cout << R2 << std::endl;
-        std::cout << T1.t() << std::endl;
-        std::cout << T2.t() << std::endl;
+        //std::cout << R1 << std::endl;
+        //std::cout << R2 << std::endl;
+        //std::cout << T1.t() << std::endl;
+        //std::cout << T2.t() << std::endl;
 
         // voting
         std::vector<Point2> q, t;
@@ -90,25 +89,24 @@ int main(){
         utils::ArrangeMatchPoints(kp1, kp2, matches, q, t);
         utils::ToNormalizedSpace(cameraMat, q, -1);
         utils::ToNormalizedSpace(cameraMat, t, -1);
-        //vo::VoteRT(R1,R2,T1,T2,q,t);
-        utils::Voter voter;
         
         auto func1 = std::bind(candidate, std::ref(R1), std::ref(T1), std::ref(q), std::ref(t));
         auto func2 = std::bind(candidate, std::ref(R1), std::ref(T2), std::ref(q), std::ref(t));
         auto func3 = std::bind(candidate, std::ref(R2), std::ref(T1), std::ref(q), std::ref(t));
         auto func4 = std::bind(candidate, std::ref(R2), std::ref(T2), std::ref(q), std::ref(t));
         
+        utils::Voter voter;
         voter.push(func1);
         voter.push(func2);
         voter.push(func3);
         voter.push(func4);
         auto result = voter.elect();
         printf("result: %d %d\n", result.idx, result.score);
-    
+
+        
         // Get Correct RT
         cv::Mat R;
         cv::Mat T;
-        /*
         switch(result.idx){
             case 0:
                 R = R1; T = T1;
@@ -125,19 +123,20 @@ int main(){
             default:
                 R = R1; T = T1;
         }
-        */
 
         // [Triangulate 3D Structure]
-        //cv::Mat M2 = utils::ExtrinsicMatrixByRT(R,T);
-        //std::vector<Point3> points3d(matches.size());
-        //for(i32 i=0;i<matches.size();i++)
-        //    points3d[i] = vo::Triangulate1Point(M1, M2, q[i], t[i]);
+        cv::Mat M2 = utils::ExtrinsicMatrixByRT(R,T);
+        std::vector<Point3> points3d(matches.size());
+        for(i32 i=0;i<matches.size();i++)
+            points3d[i] = vo::Triangulate1Point(M1, M2, q[i], t[i]);
 
-        //for(i32 i=0; i<points3d.size(); i++)
-        //    std::cout << points3d[i] << std::endl;
+        for(i32 i=0; i<points3d.size(); i++)
+            std::cout << points3d[i] << std::endl;
+        
         
         // [Insert Keyframes]
         return 0;
+
         // Show Window
         std::cout << std::endl;
         cv::imshow("test", img_matches);
