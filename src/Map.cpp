@@ -11,7 +11,7 @@ namespace map
 
     StructurePoint::operator cv::Mat() const
     {
-        using rettype = std::remove_const<decltype(descriptor)>::type;
+        using rettype = decltype(descriptor);
 
         cv::Mat ret(1, sizeof(descriptor), CV_8UC1, const_cast<rettype *>(&descriptor));
         return ret.clone();
