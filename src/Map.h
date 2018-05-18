@@ -3,6 +3,7 @@
 
 #include <opencv2/opencv.hpp>
 #include <vector>
+#include <list>
 #include <array>
 #include <Eigen/Eigen>
 #include "Config.h"
@@ -17,23 +18,30 @@ struct KeyFrameNode {
     /** @brief  */
     cv::Mat mask;
     std::vector<int> keyPointIndices;
+    Matrix4 extrinsic;
 };
 
-template <class T, size_t N>
+struct ORBPointDescriptor {
+    uint8_t data[32];
+    ORBPointDescriptor()=default;
+    operator cv::Mat() const;
+    ORBPointDescriptor(const cv::Mat &mat);
+};
+
+struct StructurePoint {
+    Point3 point;
+    ORBPointDescriptor descriptor;
+};
+
 struct GlobalState {
-    std::vector<StructurePoint<T, N>> structure;
-    std::vector<KeyFrameNode> frameGraph;
+    std::vector<StructurePoint> structure;
+    std::list<KeyFrameNode> frameGraph;
+    u32 rootIdx;
 };
 
 struct LocalMap {
     std::vector<u32> pidx; 
-    std::vector<std::array<T, N>> descriptors;
-};
-
-template <class T, size_t N>
-struct StructurePoint {
-    Point3 point;
-    std::array<T, N> descriptor;
+    std::vector<ORBPointDescriptor> descriptors;
 };
 
 }
