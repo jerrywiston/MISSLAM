@@ -92,20 +92,21 @@ void ConvertDescriptor(cv::Mat desc, std::vector<map::ORBPointDescriptor> &out)
     std::memcpy(out.data(), desc.ptr<u8>(), sizeof(map::ORBPointDescriptor) * desc.rows);
 }
 
-void Voter::push(std::function<u32 ()> func) {
-    candidates.push_back(func);
+void Voter::push(std::function<u32 ()> func, std::function<void()> onWin) {
+    candidates.push_back({func, onWin});
 }
 
 Election Voter::elect() const {
     i32 maxone=-1;
     u32 score;
     for(i32 i=0; i<candidates.size(); i++) {
-        u32 sc = candidates[i]();
+        u32 sc = candidates[i].first();
         if (maxone==-1 || score < sc) {
             score = sc;
             maxone = i;
         }
     }
+    candidates[maxone].second();
     return {maxone, score};
 }
 

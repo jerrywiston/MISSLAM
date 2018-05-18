@@ -98,34 +98,16 @@ int main(){
         auto func3 = std::bind(candidate, std::ref(R2), std::ref(T1), std::ref(q), std::ref(t));
         auto func4 = std::bind(candidate, std::ref(R2), std::ref(T2), std::ref(q), std::ref(t));
         
-        utils::Voter voter;
-        voter.push(func1);
-        voter.push(func2);
-        voter.push(func3);
-        voter.push(func4);
-        auto result = voter.elect();
-        printf("result: %d %d\n", result.idx, result.score);
-
-        
-        // Get Correct RT
+         // Get Correct RT by election
         cv::Mat R;
         cv::Mat T;
-        switch(result.idx){
-            case 0:
-                R = R1; T = T1;
-                break;
-            case 1:
-                R = R1; T = T2;
-                break;
-            case 2:
-                R = R2; T = T1;
-                break;
-            case 3:
-                R = R2; T = T2;
-                break;
-            default:
-                R = R1; T = T1;
-        }
+        utils::Voter voter;
+        voter.push(func1, [&R, &T, R_=R1, T_=T1] () {R=R_; T=T_;});
+        voter.push(func2, [&R, &T, R_=R1, T_=T2] () {R=R_; T=T_;});
+        voter.push(func3, [&R, &T, R_=R2, T_=T1] () {R=R_; T=T_;});
+        voter.push(func4, [&R, &T, R_=R2, T_=T2] () {R=R_; T=T_;});
+        auto result = voter.elect();
+        printf("result: %d %d\n", result.idx, result.score);
 
         // [Triangulate 3D Structure]
         cv::Mat M2 = utils::ExtrinsicMatrixByRT(R,T);
@@ -135,7 +117,6 @@ int main(){
 
         for(i32 i=0; i<points3d.size(); i++)
             std::cout << points3d[i] << std::endl;
-        
         
         // [Insert Keyframes]
         return 0;

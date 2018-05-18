@@ -49,10 +49,10 @@ namespace utils {
     
     class Voter {
     public:
-        void push(std::function<u32 ()> evalFunc);
+        void push(std::function<u32 ()> evalFunc, std::function<void()> onWin=[](){});
         Election elect() const;
     private:
-        std::vector<std::function<u32 ()>> candidates;
+        std::vector<std::pair<std::function<u32 ()>, std::function<void ()>>> candidates;
     };
 }
 }
