@@ -34,7 +34,7 @@ template <class T, size_t N>
 struct StructurePoint {
     Point3 point;
     std::array<T, N> descriptor;
-}
+};
 
 }
 }

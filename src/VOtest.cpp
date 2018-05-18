@@ -78,6 +78,8 @@ int main(){
         // [Transform Extraction]
         cv::Mat R1, R2, T1, T2;
         vo::ExtractRT(essMat, R1, R2, T1, T2);
+        std::cout << cv::determinant(R1) << std::endl;
+        std::cout << cv::determinant(R2) << std::endl;
         //std::cout << R1 << std::endl;
         //std::cout << R2 << std::endl;
         //std::cout << T1.t() << std::endl;
@@ -130,8 +132,8 @@ int main(){
         for(i32 i=0;i<matches.size();i++)
             points3d[i] = vo::Triangulate1Point(M1, M2, q[i], t[i]);
 
-        for(i32 i=0; i<points3d.size(); i++)
-            std::cout << points3d[i] << std::endl;
+        //for(i32 i=0; i<points3d.size(); i++)
+        //    std::cout << points3d[i] << std::endl;
         
         
         // [Insert Keyframes]
