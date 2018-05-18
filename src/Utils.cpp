@@ -33,7 +33,7 @@ std::vector<cv::DMatch> ORBMatch(cv::Mat dp1, cv::Mat dp2){
     return good_matches;
 }
 
-cv::Mat ExtrinsicMatrixByRT(cv::Mat R, cv::Mat T){
+cv::Mat CameraPoseByRT(cv::Mat R, cv::Mat T){
     float temp[16] = {
         R.at<float>(0,0), R.at<float>(0,1), R.at<float>(0,2), T.at<float>(0),
         R.at<float>(1,0), R.at<float>(1,1), R.at<float>(1,2), T.at<float>(1),

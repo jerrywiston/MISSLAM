@@ -49,7 +49,9 @@ namespace vo {
         const Point2 &p1, const Point2 &p2
     );
 
-    std::tuple<map::KeyFrameNode, map::KeyFrameNode> InitialStructure();
+    u32 candidate(const cv::Mat &R, const cv::Mat &T, const std::vector<Point2> &qpts, const std::vector<Point2> &tpts);
+
+    void InitialStructure(const cv::Mat img1, const cv::Mat img2, const cv::Mat cameraMat);
 }
 
 }

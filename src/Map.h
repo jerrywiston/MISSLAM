@@ -16,7 +16,6 @@ struct KeyFrameNode {
     int KeyFrameId;
     std::vector<Point2> keyPoints;
     /** @brief  */
-    cv::Mat mask;
     std::vector<int> keyPointIndices;
     Matrix4 extrinsic;
 };

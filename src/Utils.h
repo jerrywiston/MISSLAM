@@ -32,7 +32,7 @@ namespace utils {
     * @param [in] T Translate
     * @return extrinsic matrix
     */
-    cv::Mat ExtrinsicMatrixByRT(cv::Mat R, cv::Mat T);
+    cv::Mat CameraPoseByRT(cv::Mat R, cv::Mat T);
     cv::Mat CrossMatrix(float a0, float a1, float a2);
     
     void ArrangeMatchPoints(const std::vector<cv::KeyPoint> &q, const std::vector<cv::KeyPoint> &t,
