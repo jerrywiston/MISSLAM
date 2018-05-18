@@ -36,7 +36,7 @@ u32 candidate(const cv::Mat &R, const cv::Mat &T, const std::vector<Point2> &qpt
         //break;
         passed += static_cast<u32>((m1*v).z > 0 && (m2*v).z > 0);
     }
-    //printf("passed: %d\n", passed);
+    printf("passed: %d\n", passed);
     
     return passed;
 };
@@ -68,6 +68,7 @@ int main(){
 
         std::vector<map::ORBPointDescriptor> mydp;
         utils::ConvertDescriptor(dp1, mydp);
+        mydp[0] = dp1(cv::Rect{0, 0, 32, 1});
 
         printf("<Frame %s / %s> Matches: %d\n", utils::Zfill(i,3).c_str(), utils::Zfill(i+1,3).c_str(), (int)matches.size());
         cv::Mat img_matches;
@@ -81,8 +82,9 @@ int main(){
         // [Transform Extraction]
         cv::Mat R1, R2, T1, T2;
         vo::ExtractRT(essMat, R1, R2, T1, T2);
-        //std::cout << R1 << std::endl;
-        //std::cout << R2 << std::endl;
+
+        std::cout << R1 << std::endl;
+        std::cout << R2 << std::endl;
         //std::cout << T1.t() << std::endl;
         //std::cout << T2.t() << std::endl;
 
@@ -115,8 +117,8 @@ int main(){
         for(i32 i=0;i<matches.size();i++)
             points3d[i] = vo::Triangulate1Point(M1, M2, q[i], t[i]);
 
-        for(i32 i=0; i<points3d.size(); i++)
-            std::cout << points3d[i] << std::endl;
+        //for(i32 i=0; i<points3d.size(); i++)
+        //    std::cout << points3d[i] << std::endl;
         
         // [Insert Keyframes]
         return 0;

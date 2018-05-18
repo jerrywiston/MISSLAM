@@ -4,16 +4,16 @@ namespace misslam
 {
 namespace map
 {
-    StructurePoint::StructurePoint(const cv::Mat &mat) {
-        assert(mat.rows == 1 && mat.cols == sizeof(descriptor));
-        std::memcpy(descriptor.data, mat.ptr<u8>(), sizeof(descriptor));
+    ORBPointDescriptor::ORBPointDescriptor(const cv::Mat &mat) {
+        assert(mat.rows == 1 && mat.cols == sizeof(data));
+        std::memcpy(data, mat.ptr<u8>(), sizeof(data));
     }
 
-    StructurePoint::operator cv::Mat() const
+    ORBPointDescriptor::operator cv::Mat() const
     {
-        using rettype = decltype(descriptor);
+        using rettype = decltype(data);
 
-        cv::Mat ret(1, sizeof(descriptor), CV_8UC1, const_cast<rettype *>(&descriptor));
+        cv::Mat ret(1, sizeof(data), CV_8UC1, const_cast<rettype *>(&data));
         return ret.clone();
     }
 }

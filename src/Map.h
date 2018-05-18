@@ -23,13 +23,14 @@ struct KeyFrameNode {
 
 struct ORBPointDescriptor {
     uint8_t data[32];
+    ORBPointDescriptor()=default;
+    operator cv::Mat() const;
+    ORBPointDescriptor(const cv::Mat &mat);
 };
 
 struct StructurePoint {
     Point3 point;
     ORBPointDescriptor descriptor;
-    operator cv::Mat() const;
-    StructurePoint(const cv::Mat &mat);
 };
 
 struct GlobalState {
@@ -42,6 +43,7 @@ struct LocalMap {
     std::vector<u32> pidx; 
     std::vector<ORBPointDescriptor> descriptors;
 };
+
 }
 }
 
