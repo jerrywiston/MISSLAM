@@ -66,6 +66,9 @@ int main(){
         orb->detectAndCompute(img2, mask2, kp2, dp2);
         std::vector<cv::DMatch> matches = utils::ORBMatch(dp1, dp2);
 
+        std::vector<map::ORBPointDescriptor> mydp;
+        utils::ConvertDescriptor(dp1, mydp);
+
         printf("<Frame %s / %s> Matches: %d\n", utils::Zfill(i,3).c_str(), utils::Zfill(i+1,3).c_str(), (int)matches.size());
         cv::Mat img_matches;
         cv::drawMatches(img1, kp1, img2, kp2, matches, img_matches);

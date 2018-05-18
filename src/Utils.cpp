@@ -1,4 +1,5 @@
 #include "Utils.h"
+#include <cstring>
 
 namespace misslam
 {
@@ -82,6 +83,13 @@ void ToNormalizedSpace(const cv::Mat &K, std::vector<Point2> &image_points, u32 
     for(u32 i=0; i<count; i++) {
         image_points[i] = (kinv * Vector3(image_points[i].x, image_points[i].y, 1.0_r)).xy();
     }
+}
+
+void ConvertDescriptor(cv::Mat desc, std::vector<map::ORBPointDescriptor> &out)
+{
+    assert(desc.cols == 32);
+    out.resize(desc.rows);
+    std::memcpy(out.data(), desc.ptr<u8>(), sizeof(map::ORBPointDescriptor) * desc.rows);
 }
 
 void Voter::push(std::function<u32 ()> func) {

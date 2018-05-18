@@ -8,6 +8,7 @@
 #include <cstdint>
 #include <functional>
 #include "Config.h"
+#include "Map.h"
 
 namespace misslam {
 namespace utils {
@@ -39,6 +40,7 @@ namespace utils {
         std::vector<Point2> &query, std::vector<Point2> &train);
     void ToNormalizedSpace(const cv::Mat &K, std::vector<Point2> &image_points, u32 count=-1);
 
+    void ConvertDescriptor(cv::Mat desc, std::vector<map::ORBPointDescriptor> &out);
 
     struct Election{
         i32 idx;
