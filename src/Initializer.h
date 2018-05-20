@@ -9,7 +9,9 @@
 
 namespace misslam {
 
-namespace vo {
+namespace init {
+
+namespace epipolar {
     /*
     * Compute fundamental matrix from matches
     * @param [in] matches vector of DMatch
@@ -49,9 +51,18 @@ namespace vo {
         const Point2 &p1, const Point2 &p2
     );
 
-    u32 candidate(const cv::Mat &R, const cv::Mat &T, const std::vector<Point2> &qpts, const std::vector<Point2> &tpts);
+    u32 Candidate(
+        const cv::Mat &R, const cv::Mat &T, 
+        const std::vector<Point2> &qpts, const std::vector<Point2> &tpts,
+        const int &number);
 
-    void InitialStructure(const cv::Mat img1, const cv::Mat img2, const cv::Mat cameraMat);
+    real InitStructByEssential(
+        const cv::Mat img1, const cv::Mat img2, const cv::Mat cameraMat,
+        map::KeyFrameNode &kf1, map::KeyFrameNode &kf2,
+        std::vector<map::StructurePoint> &initStruct
+    );
+}
+
 }
 
 }

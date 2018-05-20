@@ -5,7 +5,7 @@
 #include "Config.h"
 
 namespace misslam {
-    namespace tacker {
+    namespace tracker {
         class Tracker {
         public:
             virtual void feedFrame(const cv::Mat &frame)=0;
