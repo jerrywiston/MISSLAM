@@ -25,7 +25,7 @@ namespace utils {
     * @param [in] dp2 Train descriptor
     * @return matchings
     */
-    std::vector<cv::DMatch> ORBMatch(cv::Mat dp1, cv::Mat dp2);
+    std::vector<cv::DMatch> FeatureMatch(cv::Mat dp1, cv::Mat dp2);
     /*
     * Construct 4x4 extrinsic matrix from [R|T]
     * @param [in] R Rotation
@@ -41,6 +41,11 @@ namespace utils {
     void ToNormalizedSpace(const cv::Mat &K, std::vector<Point2> &image_points, u32 count=-1);
 
     void ConvertDescriptor(cv::Mat desc, std::vector<map::ORBPointDescriptor> &out);
+
+    Point3 Triangulate1Point(
+        const cv::Mat &M1, const cv::Mat &M2,
+        const Point2 &p1, const Point2 &p2
+    );
 
     struct Election{
         i32 idx;

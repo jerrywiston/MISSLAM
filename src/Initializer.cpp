@@ -51,29 +51,6 @@ namespace epipolar{
         T2 = cv::Mat(3, 1, CV_REAL, temp2).clone();
     }
 
-    Point3 Triangulate1Point(
-        const cv::Mat &M1, const cv::Mat &M2,
-        const Point2 &p1, const Point2 &p2
-    ){       
-        // Construct matrix
-        cv::Mat p1x = utils::CrossMatrix(p1.x, p1.y, 1);
-        cv::Mat p2x = utils::CrossMatrix(p2.x, p2.y, 1);
-        
-        cv::Mat A;
-        cv::vconcat(p1x*M1, p2x*M2, A);
-        
-        // Matrix decomposition
-        cv::SVD computeSVD(A, cv::SVD::FULL_UV);
-        cv::Mat U = computeSVD.u;
-        cv::Mat W = computeSVD.w;
-        cv::Mat VT = computeSVD.vt;
-        
-        cv::Mat P = VT.t().col(3);
-        P = P / P.at<real>(3);
-
-        return {P.at<real>(0), P.at<real>(1), P.at<real>(2)};
-    }
-
     u32 Candidate(
         const cv::Mat &R, const cv::Mat &T, 
         const std::vector<Point2> &qpts, const std::vector<Point2> &tpts, 
@@ -88,7 +65,7 @@ namespace epipolar{
 
         u32 passed = 0;
         for (i32 i=0; i<number; i++) {
-            auto v = Vector4(Triangulate1Point(M1, M2, qpts[i], tpts[i]), 1.0_r);
+            auto v = Vector4(utils::Triangulate1Point(M1, M2, qpts[i], tpts[i]), 1.0_r);
             passed += static_cast<u32>((m1*v).z > 0 && (m2*v).z > 0);
         }
 
@@ -109,9 +86,8 @@ namespace epipolar{
         cv::Mat dp1, dp2, mask1, mask2;
         orb->detectAndCompute(img1, mask1, kp1, dp1);
         orb->detectAndCompute(img2, mask2, kp2, dp2);
-        std::vector<cv::DMatch> matches = utils::ORBMatch(dp1, dp2);
+        std::vector<cv::DMatch> matches = utils::FeatureMatch(dp1, dp2);
 
-        //printf("<Frame %s / %s> Matches: %d\n", utils::Zfill(i,3).c_str(), utils::Zfill(i+1,3).c_str(), (int)matches.size());
         cv::namedWindow("test", cv::WINDOW_AUTOSIZE);
         cv::Mat img_matches;
         cv::drawMatches(img1, kp1, img2, kp2, matches, img_matches);
@@ -153,7 +129,7 @@ namespace epipolar{
         cv::Mat M2 = utils::CameraPoseByRT(R,T);
         initStruct.resize(matches.size());
         for(i32 i=0;i<matches.size();i++){
-            initStruct[i].point = Triangulate1Point(M1, M2, q[i], t[i]);
+            initStruct[i].point = utils::Triangulate1Point(M1, M2, q[i], t[i]);
             initStruct[i].descriptor = dp2.row(matches[i].trainIdx).clone();
         }
 

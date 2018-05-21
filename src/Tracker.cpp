@@ -1,13 +1,15 @@
-#include <opencv2/opencv.hpp>
-#include <vector>
-#include "Config.h"
-#include "Utils.h"
 #include "Tracker.h"
 
-namespace misslam {
-namespace tracker {
+namespace misslam
+{
+namespace tracker
+{
 
-
+Tracker::Tracker(const cv::Mat &cameraMat)
+    : cameraMat(cameraMat), R(1._r), T()
+{
+    
+}
 
 }
 }

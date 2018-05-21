@@ -38,23 +38,11 @@ namespace epipolar {
         cv::Mat &T1, cv::Mat &T2
     );
 
-    /*
-    * Extract transform from essential matrix
-    * @param [in] M1 camera 1 extrinsic
-    * @param [in] M2 camera 2 extrinsic
-    * @param [in]  p1 normalized image coordinate
-    * @param [in]  p2 normalized image coordinate 
-    * @return position related to world space
-    */
-    Point3 Triangulate1Point(
-        const cv::Mat &M1, const cv::Mat &M2,
-        const Point2 &p1, const Point2 &p2
-    );
-
     u32 Candidate(
         const cv::Mat &R, const cv::Mat &T, 
         const std::vector<Point2> &qpts, const std::vector<Point2> &tpts,
-        const int &number);
+        const int &number
+    );
 
     real InitStructByEssential(
         const cv::Mat img1, const cv::Mat img2, const cv::Mat cameraMat,
