@@ -65,7 +65,7 @@ namespace epipolar{
 
         u32 passed = 0;
         for (i32 i=0; i<number; i++) {
-            auto v = Vector4(utils::Triangulate1Point(M1, M2, qpts[i], tpts[i]), 1.0_r);
+            auto v = Vector4(utils::Triangulate2View(M1, M2, qpts[i], tpts[i]), 1.0_r);
             passed += static_cast<u32>((m1*v).z > 0 && (m2*v).z > 0);
         }
 
@@ -129,7 +129,8 @@ namespace epipolar{
         cv::Mat M2 = utils::CameraPoseByRT(R,T);
         initStruct.resize(matches.size());
         for(i32 i=0;i<matches.size();i++){
-            initStruct[i].point = utils::Triangulate1Point(M1, M2, q[i], t[i]);
+            //std::cout << q[i] << " " << t[i] << std::endl;
+            initStruct[i].point = utils::Triangulate2View(M1, M2, q[i], t[i]);
             initStruct[i].descriptor = dp2.row(matches[i].trainIdx).clone();
         }
 

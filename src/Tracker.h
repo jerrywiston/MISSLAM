@@ -16,20 +16,10 @@ namespace misslam {
         public:
             Tracker(const cv::Mat &cameraMat);
 
-            void constructLastFramePoints(
-                std::vector<map::StructurePoint> &structPoints,
-                std::vector<map::KeyFrameNode> &lastKeyFrame
-            );
-
-            void constructLocalMapPoints(
-                
-                
-            );
-
             virtual TrackStatus track(const cv::Mat &img, map::GlobalState &gstate)=0;
 
             Matrix4 getExtrinsic() const;
-        private:
+        protected:
             cv::Mat cameraMat;
             Matrix3 R;
             Vector3 T;

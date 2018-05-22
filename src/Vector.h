@@ -81,6 +81,11 @@ namespace misslam {
     using Vector4d = TVector4<double>;
 
     template <class T>
+    static std::ostream &operator<<(std::ostream &out, const misslam::TVector2<T> &p) {
+        return out << "Vector2(" << p.x << ", " << p.y << ")";
+    }
+
+    template <class T>
     static std::ostream &operator<<(std::ostream &out, const misslam::TVector3<T> &p) {
         return out << "Vector3(" << p.x << ", " << p.y << ", " << p.z << ")";
     }

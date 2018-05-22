@@ -42,10 +42,12 @@ namespace utils {
 
     void ConvertDescriptor(cv::Mat desc, std::vector<map::ORBPointDescriptor> &out);
 
-    Point3 Triangulate1Point(
+    Point3 Triangulate2View(
         const cv::Mat &M1, const cv::Mat &M2,
         const Point2 &p1, const Point2 &p2
     );
+
+    cv::Mat Flow2BGR(cv::Mat flow);
 
     struct Election{
         i32 idx;
