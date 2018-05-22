@@ -13,7 +13,7 @@ namespace misslam {
 
 namespace map {
 struct KeyFrameNode {
-    int KeyFrameId;
+    int keyFrameId;
     std::vector<Point2> keyPoints;
     /** @brief  */
     std::vector<int> keyPointIndices;

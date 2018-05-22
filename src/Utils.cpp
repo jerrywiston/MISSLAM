@@ -12,7 +12,7 @@ std::string Zfill(u32 i, u32 fill){
     return out;
 }
 
-std::vector<cv::DMatch> ORBMatch(cv::Mat dp1, cv::Mat dp2){
+std::vector<cv::DMatch> FeatureMatch(cv::Mat dp1, cv::Mat dp2){
     cv::BFMatcher matcher(cv::NORM_L2);
     std::vector<cv::DMatch> matches;
     matcher.match(dp1, dp2, matches);
@@ -109,6 +109,29 @@ Election Voter::elect() const {
     candidates[maxone].second();
     return {maxone, score};
 }
+
+    Point3 Triangulate1Point(
+        const cv::Mat &M1, const cv::Mat &M2,
+        const Point2 &p1, const Point2 &p2
+    ){       
+        // Construct matrix
+        cv::Mat p1x = utils::CrossMatrix(p1.x, p1.y, 1);
+        cv::Mat p2x = utils::CrossMatrix(p2.x, p2.y, 1);
+        
+        cv::Mat A;
+        cv::vconcat(p1x*M1, p2x*M2, A);
+        
+        // Matrix decomposition
+        cv::SVD computeSVD(A, cv::SVD::FULL_UV);
+        cv::Mat U = computeSVD.u;
+        cv::Mat W = computeSVD.w;
+        cv::Mat VT = computeSVD.vt;
+        
+        cv::Mat P = VT.t().col(3);
+        P = P / P.at<real>(3);
+
+        return {P.at<real>(0), P.at<real>(1), P.at<real>(2)};
+    }
 
 }
 }

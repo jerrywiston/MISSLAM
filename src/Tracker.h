@@ -3,19 +3,53 @@
 
 #include <opencv2/opencv.hpp>
 #include "Config.h"
+#include "Map.h"
 
 namespace misslam {
-    namespace tacker {
+    namespace tracker {
+        enum class TrackStatus {
+            eSuccess, eFail
+        };
+
+
         class Tracker {
         public:
-            virtual void feedFrame(const cv::Mat &frame)=0;
-            virtual bool lastFrameIsKeyframe() const;
+            Tracker(const cv::Mat &cameraMat);
+
+            void constructLastFramePoints(
+                std::vector<map::StructurePoint> &structPoints,
+                std::vector<map::KeyFrameNode> &lastKeyFrame
+            );
+
+            void constructLocalMapPoints(
+                
+                
+            );
+
+            virtual TrackStatus track(const cv::Mat &img, map::GlobalState &gstate)=0;
+
             Matrix4 getExtrinsic() const;
         private:
+            cv::Mat cameraMat;
             Matrix3 R;
             Vector3 T;
         };
+
+        template <class T>
+        class TIndirectTracker: public Tracker {
+        public:
+            TIndirectTracker(const cv::Mat &cameraMat)
+                : Tracker(cameraMat)
+            {
+                
+            }
+            virtual TrackStatus track(const cv::Mat &img, map::GlobalState &gstate) override;
+        };
+
+        using ORBTracker = TIndirectTracker<cv::ORB>;
     }
 }
+
+#include "Tracker.inl"
 
 #endif

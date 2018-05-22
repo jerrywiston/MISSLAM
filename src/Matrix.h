@@ -108,6 +108,7 @@ namespace misslam {
         { return {m[idx], m[idx+4], m[idx+8], m[idx+12]}; }
 
         TVector4<T> operator*(const TVector4<T> &rhs) const;
+
     private:
         T m[16];
     };
