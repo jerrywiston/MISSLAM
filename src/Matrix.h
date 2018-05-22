@@ -50,6 +50,16 @@ namespace misslam {
 
         TVector3<T> col(uint32_t idx) const
         { return {m[idx], m[idx+3], m[idx+6]}; }
+
+        cv::Mat toMat() const {
+            // TODO..
+            return cv::Mat(3, 3, CV_32FC1, const_cast<T *>(data())).clone();
+        }
+
+        operator cv::Mat() const {
+            // TODO..
+            return toMat();
+        }
     private:
         T m[9];
     };
@@ -108,6 +118,16 @@ namespace misslam {
         { return {m[idx], m[idx+4], m[idx+8], m[idx+12]}; }
 
         TVector4<T> operator*(const TVector4<T> &rhs) const;
+
+        cv::Mat toMat() const {
+            // TODO..
+            return cv::Mat(4, 4, CV_32FC1, const_cast<T *>(data())).clone();
+        }
+
+        operator cv::Mat() const {
+            // TODO..
+            return toMat();
+        }
 
     private:
         T m[16];

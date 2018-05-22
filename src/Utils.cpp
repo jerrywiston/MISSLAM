@@ -110,28 +110,73 @@ Election Voter::elect() const {
     return {maxone, score};
 }
 
-    Point3 Triangulate1Point(
-        const cv::Mat &M1, const cv::Mat &M2,
-        const Point2 &p1, const Point2 &p2
-    ){       
-        // Construct matrix
-        cv::Mat p1x = utils::CrossMatrix(p1.x, p1.y, 1);
-        cv::Mat p2x = utils::CrossMatrix(p2.x, p2.y, 1);
+Point3 Triangulate2View(
+    const cv::Mat &M1, const cv::Mat &M2,
+    const Point2 &p1, const Point2 &p2)
+{       
+    // Construct matrix
+    cv::Mat p1x = utils::CrossMatrix(p1.x, p1.y, 1);
+    cv::Mat p2x = utils::CrossMatrix(p2.x, p2.y, 1);
         
-        cv::Mat A;
-        cv::vconcat(p1x*M1, p2x*M2, A);
+    cv::Mat A;
+    cv::vconcat(p1x*M1, p2x*M2, A);
         
-        // Matrix decomposition
-        cv::SVD computeSVD(A, cv::SVD::FULL_UV);
-        cv::Mat U = computeSVD.u;
-        cv::Mat W = computeSVD.w;
-        cv::Mat VT = computeSVD.vt;
+    // Matrix decomposition
+    cv::SVD computeSVD(A, cv::SVD::FULL_UV);
+    cv::Mat U = computeSVD.u;
+    cv::Mat W = computeSVD.w;
+    cv::Mat VT = computeSVD.vt;
         
-        cv::Mat P = VT.t().col(3);
-        P = P / P.at<real>(3);
+    cv::Mat P = VT.t().col(3);
+    P = P / P.at<real>(3);
 
-        return {P.at<real>(0), P.at<real>(1), P.at<real>(2)};
+    return {P.at<real>(0), P.at<real>(1), P.at<real>(2)};
+}
+/*
+Point3 TriangulateMultiView(
+    const std::vector<cv::Mat> &M,
+    const std::vector<Point2> &p)
+{       
+    // Construct matrix
+    cv::Mat A;
+    std::vector<cv::Mat> px(p.size());
+    for(int i=0; i<p.size(); ++i){
+        cv::Mat px = utils::CrossMatrix(p[i].x, p[i].y, 1);
+        cv::vconcat(A, px*M[i], A);
     }
+        
+    // Matrix decomposition
+    cv::SVD computeSVD(A, cv::SVD::FULL_UV);
+    cv::Mat U = computeSVD.u;
+    cv::Mat W = computeSVD.w;
+    cv::Mat VT = computeSVD.vt;
+        
+    cv::Mat P = VT.t().col(3);
+    P = P / P.at<real>(3);
+
+    return {P.at<real>(0), P.at<real>(1), P.at<real>(2)};
+}
+*/
+cv::Mat Flow2BGR(cv::Mat flow){
+    cv::Mat xy[2];
+    cv::split(flow, xy);
+        
+    cv::Mat mag, ang;
+    cv::cartToPolar(xy[0], xy[1], mag, ang, true);
+        
+    double mag_max;
+    cv::minMaxLoc(mag, 0, &mag_max);
+    mag.convertTo(mag, -1, 1.0/mag_max);
+    cv::Mat _hsv[3], hsv;
+    _hsv[0] = ang;
+    _hsv[1] = cv::Mat::ones(ang.size(), CV_32F);
+    _hsv[2] = mag;
+    cv::merge(_hsv, 3, hsv);
+
+    cv::Mat bgr;
+    cv::cvtColor(hsv, bgr, cv::COLOR_HSV2BGR);
+    return bgr;
+}
 
 }
 }
