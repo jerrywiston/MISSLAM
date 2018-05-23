@@ -7,8 +7,8 @@ namespace tracker
 
 template <class T>
 TrackStatus TIndirectTracker<T>::track(const cv::Mat &img, map::GlobalState &gstate){
-    // Extract ORB
     /*
+    // Extract ORB
     auto detector = T::create();
     std::vector<cv::KeyPoint> kp;
     cv::Mat dp, mask;
@@ -17,7 +17,13 @@ TrackStatus TIndirectTracker<T>::track(const cv::Mat &img, map::GlobalState &gst
     std::vector<cv::DMatch> matches = utils::FeatureMatch(dp, dp_map);
 
     // Compute Transform
-    cv::Mat mapPoints, imgPoints;
+    cv::Mat mapPoints(3,gstate.structure.size(),CV_REAL); 
+    cv::Mat imgPoints(3,matches.size(),CV_REAL);
+
+    for(int i=0; i<gstate.structure.size(); ++i){
+        //mapPoints.
+    }
+
     cv::Mat Rcv, Tcv;
     cv::solvePnPRansac(mapPoints, imgPoints, cameraMat, cv::Mat(), Rcv, Tcv);
     cv::Rodrigues(Rcv, Rcv);

@@ -64,16 +64,23 @@ cv::Mat CrossMatrix(float a0, float a1, float a2){
     return out.clone();
 }
 
-void ArrangeMatchPoints(const std::vector<cv::KeyPoint> &q, const std::vector<cv::KeyPoint> &t,
+u32 ArrangeMatchPoints(const std::vector<cv::KeyPoint> &q, const std::vector<cv::KeyPoint> &t,
     const std::vector<cv::DMatch> &matches,
-    std::vector<Point2> &query, std::vector<Point2> &train)
+    std::vector<Point2> &query, std::vector<Point2> &train,
+    const std::vector<uchar> &mask)
 {
-    query.resize(matches.size());
-    train.resize(matches.size());
+    u32 validMatches = std::accumulate(mask.cbegin(), mask.cend(), u32(0));
+    validMatches = mask.size()==0? matches.size(): validMatches;
+    query.resize(validMatches);
+    train.resize(validMatches);
+    u32 c=0;
     for(u32 i=0; i<matches.size(); i++) {
-        query[i] = q[matches[i].queryIdx].pt;
-        train[i] = t[matches[i].trainIdx].pt;
+        if(mask.size()==0 || mask[i]) {
+            query[c] = q[matches[i].queryIdx].pt;
+            train[c++] = t[matches[i].trainIdx].pt;
+        }
     }
+    return validMatches;
 }
 
 void ToNormalizedSpace(const cv::Mat &K, std::vector<Point2> &image_points, u32 count)
@@ -126,10 +133,10 @@ Point3 Triangulate2View(
     cv::Mat U = computeSVD.u;
     cv::Mat W = computeSVD.w;
     cv::Mat VT = computeSVD.vt;
-        
+    
     cv::Mat P = VT.t().col(3);
     P = P / P.at<real>(3);
-
+    
     return {P.at<real>(0), P.at<real>(1), P.at<real>(2)};
 }
 /*
