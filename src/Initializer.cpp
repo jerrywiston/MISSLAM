@@ -89,17 +89,11 @@ namespace epipolar{
         orb->detectAndCompute(img2, mask2, kp2, dp2);
         std::vector<cv::DMatch> matches = utils::FeatureMatch(dp1, dp2);
 
-        cv::namedWindow("test", cv::WINDOW_AUTOSIZE);
-        cv::Mat img_matches;
-        cv::drawMatches(img1, kp1, img2, kp2, matches, img_matches);
-        cv::imshow("test", img_matches);
-
         // [Recover Essential Matrix]
         std::vector<uchar> mask;
         const cv::Mat funMat = GetFundamentalMatrix(matches, kp1, kp2, mask);
+        std::cout << "HH" << funMat.type() << std::endl;
         const cv::Mat essMat = cameraMat.t() * funMat * cameraMat;
-
-
 
         // [Transform Extraction]
         cv::Mat R1, R2, T1, T2;
@@ -131,15 +125,14 @@ namespace epipolar{
         cv::Mat aa,bb;
         cv::normalize(essMat, aa, 0, 1, cv::NORM_MINMAX);
         cv::normalize(ess_re, bb, 0, 1, cv::NORM_MINMAX);
-        std::cout << aa << std::endl;
-        std::cout << bb << std::endl;
+        //std::cout << aa << std::endl;
+        //std::cout << bb << std::endl;
 
         // [Triangulate 3D Structure]
         misslam::real temp2[12] = {1,0,0,0,0,1,0,0,0,0,1,0};
         cv::Mat M1 = cv::Mat(3, 4, CV_REAL, temp2);
         cv::Mat M2 = utils::CameraPoseByRT(R,T);
 
-        
         initStruct.resize(validMatches);
         
         std::vector<cvPoint2> q_, t_;
@@ -148,10 +141,9 @@ namespace epipolar{
         cv::correctMatches(essMat, qq, tt, q_, t_);
         for(i32 i=0;i<validMatches;i++){
             //std::cout << q[i] << " " << t[i] << std::endl;
-
-            initStruct[i].point = utils::Triangulate2View(M1, M2, q_[i], t_[i]);
-            auto a = cv::Mat(Point3(q_[i], 1)).t() * aa * cv::Mat(Point3(t_[i], 1));
+            //auto a = cv::Mat(Point3(q_[i], 1)).t() * aa * cv::Mat(Point3(t_[i], 1));
             //std::cout << a << std::endl;
+            initStruct[i].point = utils::Triangulate2View(M1, M2, q_[i], t_[i]);
             initStruct[i].descriptor = dp2.row(matches[i].trainIdx).clone();
        
         }
@@ -166,6 +158,12 @@ namespace epipolar{
         kf2.keyFrameId = 1;
         kf2.keyPoints = t;
         kf2.extrinsic = (Matrix4)M2;
+
+        // Draw match
+        cv::namedWindow("test", cv::WINDOW_AUTOSIZE);
+        cv::Mat img_matches;
+        cv::drawMatches(img1, kp1, img2, kp2, matches, img_matches);
+        cv::imshow("test", img_matches);
 
         // Retrun Vote Result
         //return (real)result.score/(real)elecNum;

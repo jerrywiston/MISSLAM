@@ -23,6 +23,7 @@ struct KeyFrameNode {
 struct ORBPointDescriptor {
     uint8_t data[32];
     ORBPointDescriptor()=default;
+    ORBPointDescriptor(const ORBPointDescriptor &rhs)=default;
     operator cv::Mat() const;
     ORBPointDescriptor(const cv::Mat &mat);
 };

@@ -39,6 +39,7 @@ namespace utils {
         const std::vector<cv::DMatch> &matches,
         std::vector<Point2> &query, std::vector<Point2> &train,
         const std::vector<uchar> &mask={});
+
     void ToNormalizedSpace(const cv::Mat &K, std::vector<Point2> &image_points, u32 count=-1);
 
     void ConvertDescriptor(cv::Mat desc, std::vector<map::ORBPointDescriptor> &out);
