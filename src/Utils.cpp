@@ -178,5 +178,26 @@ cv::Mat Flow2BGR(cv::Mat flow){
     return bgr;
 }
 
+cv::Mat ReconstructImage(const cv::Mat &query, const cv::Mat &flow)
+{
+    cv::Mat ret(query.size(), query.type());
+
+    cv::Mat map_x(query.size(), CV_32FC1);
+    cv::Mat map_y(query.size(), CV_32FC1);
+
+    cv::Mat map_x_1,map_y_1;
+    for(i32 i=0; i<query.rows; i++) {
+        for(i32 j=0; j<query.cols; j++) {
+            auto v = flow.at<cv::Vec2f>(i, j);
+            map_x.at<float>(i, j) = j+v[0];
+            map_y.at<float>(i, j) = i+v[1];
+        }
+    }
+
+    cv::remap(query, ret, map_x, map_y, cv::InterpolationFlags::INTER_LINEAR);
+
+    return ret;
+}
+
 }
 }

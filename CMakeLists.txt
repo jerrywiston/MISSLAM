@@ -17,6 +17,6 @@ target_link_libraries( VOtest ${OpenCV_LIBS})
 enable_testing()
 add_test(NAME MyTest COMMAND runUnitTests)
 
-add_executable(runUnitTests ./test/test.cpp)
+add_executable(runUnitTests ./test/test.cpp ./src/Utils.cpp ./src/Utils.h)
 target_link_libraries(runUnitTests gtest gtest_main ${OpenCV_LIBS} ${CMAKE_THREAD_LIBS_INIT})
 

@@ -1,4 +1,4 @@
-inline bool InvMatrix(const float m[16], float invOut[16])
+static inline bool InvMatrix(const float m[16], float invOut[16])
 {
     float inv[16], det;
     int i;

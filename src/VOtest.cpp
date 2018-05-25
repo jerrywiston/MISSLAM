@@ -28,6 +28,11 @@ std::vector<Point3> PointCloudByOptFlow(
     std::vector<Point3> P;
     cv::Mat flow;
     cv::calcOpticalFlowFarneback(img1, img2, flow, 0.5, 3, 15, 3, 5, 1.2, 0);
+
+   auto _ = utils::ReconstructImage(img1, flow);
+   cv::imshow("GGGGGG", _);
+   cv::waitKey(0);
+
     const float dist = 1.5;
     Matrix3 camMat(cameraMat.inv());
     for(int i=0; i<img1.rows; i++){

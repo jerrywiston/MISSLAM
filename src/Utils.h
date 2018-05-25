@@ -49,6 +49,8 @@ namespace utils {
 
     cv::Mat Flow2BGR(cv::Mat flow);
 
+    cv::Mat ReconstructImage(const cv::Mat &query, const cv::Mat &flow);
+
     struct Election{
         i32 idx;
         u32 score;        
