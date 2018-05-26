@@ -2,6 +2,7 @@
 #define _MISSLAM_VECTOR_H_
 
 #include <iostream>
+#include <opencv2/opencv.hpp>
 
 namespace misslam {
     template <class T>
@@ -11,6 +12,20 @@ namespace misslam {
         TVector2(T x, T y)
             : x(x), y(y)
         {}
+
+        template <class S>
+        TVector2<T>(const S &cvpoint)
+            : x(cvpoint.x), y(cvpoint.y)
+        {
+        }
+
+        operator cv::Point2f() const {
+            return cv::Point2f{x, y};
+        }
+
+        operator cv::Point2d() const {
+            return cv::Point2d{x, y};
+        }
 
         template <class S>
         TVector2<T> operator =(const S &cvpoint) {
@@ -49,7 +64,22 @@ namespace misslam {
             z = cvpoint.z;
             return *this;
         }
+
+        operator cv::Mat() const
+        {
+            return (cv::Mat_<T>(3, 1)<<x,y,z);
+        }
+
+        operator cv::Point3f() const {
+            return cv::Point3f{x, y, z};
+        }
+
+        operator cv::Point3d() const {
+            return cv::Point3d{x, y, z};
+        }
+
     };
+
     using Vector3f = TVector3<float>;
     using Vector3d = TVector3<double>;
 

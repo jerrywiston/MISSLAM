@@ -35,9 +35,11 @@ namespace utils {
     cv::Mat CameraPoseByRT(cv::Mat R, cv::Mat T);
     cv::Mat CrossMatrix(float a0, float a1, float a2);
     
-    void ArrangeMatchPoints(const std::vector<cv::KeyPoint> &q, const std::vector<cv::KeyPoint> &t,
+    u32 ArrangeMatchPoints(const std::vector<cv::KeyPoint> &q, const std::vector<cv::KeyPoint> &t,
         const std::vector<cv::DMatch> &matches,
-        std::vector<Point2> &query, std::vector<Point2> &train);
+        std::vector<Point2> &query, std::vector<Point2> &train,
+        const std::vector<uchar> &mask={});
+
     void ToNormalizedSpace(const cv::Mat &K, std::vector<Point2> &image_points, u32 count=-1);
 
     void ConvertDescriptor(cv::Mat desc, std::vector<map::ORBPointDescriptor> &out);
@@ -63,6 +65,16 @@ namespace utils {
     private:
         std::vector<std::pair<std::function<u32 ()>, std::function<void ()>>> candidates;
     };
+
+    template <class S, class T>
+    std::vector<S> ConvertInnerType(const std::vector<T> &v) {
+        std::vector<S> ret;
+        ret.reserve(v.size());
+        for(auto &v_: v) {
+            ret.push_back(S{v_});
+        }
+        return ret;
+    }
 }
 }
 

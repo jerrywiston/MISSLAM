@@ -19,6 +19,9 @@ namespace misslam {
             virtual TrackStatus track(const cv::Mat &img, map::GlobalState &gstate)=0;
 
             Matrix4 getExtrinsic() const;
+
+            Matrix3 getR();
+            Vector3 getT();
         protected:
             cv::Mat cameraMat;
             Matrix3 R;

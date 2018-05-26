@@ -14,9 +14,10 @@ namespace epipolar{
     const cv::Mat WMat = cv::Mat(3, 3, CV_REAL, (real *)data3);
 
     cv::Mat GetFundamentalMatrix(
-        std::vector<cv::DMatch> matches, 
-        std::vector<cv::KeyPoint> kp1, 
-        std::vector<cv::KeyPoint> kp2)
+        const std::vector<cv::DMatch> &matches, 
+        const std::vector<cv::KeyPoint> &kp1, 
+        const std::vector<cv::KeyPoint> &kp2,
+        std::vector<uchar> &mask)
     {
         std::vector<cvPoint2> p1cv(matches.size());
         std::vector<cvPoint2> p2cv(matches.size());
@@ -27,8 +28,8 @@ namespace epipolar{
             p2cv[i] = kp2[matches[i].trainIdx].pt;
         }
 
-        std::vector<uchar> m_RANSACStatus;
-        cv::Mat funMat = cv::findFundamentalMat(p1cv, p2cv, m_RANSACStatus, cv::FM_RANSAC, 2.0, 0.5);
+        mask.clear();
+        cv::Mat funMat = cv::findFundamentalMat(p1cv, p2cv, mask, cv::FM_RANSAC, 2.0, 0.5);
         funMat.convertTo(funMat, CV_REAL);
         
         return funMat;
@@ -73,7 +74,7 @@ namespace epipolar{
         return passed;
     };
 
-    real InitStructByEssential(
+    cv::Mat InitStructByEssential(
         const cv::Mat img1, const cv::Mat img2, const cv::Mat cameraMat,
         map::KeyFrameNode &kf1, map::KeyFrameNode &kf2,
         std::vector<map::StructurePoint> &initStruct
@@ -88,13 +89,10 @@ namespace epipolar{
         orb->detectAndCompute(img2, mask2, kp2, dp2);
         std::vector<cv::DMatch> matches = utils::FeatureMatch(dp1, dp2);
 
-        cv::namedWindow("test", cv::WINDOW_AUTOSIZE);
-        cv::Mat img_matches;
-        cv::drawMatches(img1, kp1, img2, kp2, matches, img_matches);
-        cv::imshow("test", img_matches);
-
         // [Recover Essential Matrix]
-        const cv::Mat funMat = GetFundamentalMatrix(matches, kp1, kp2);
+        std::vector<uchar> mask;
+        const cv::Mat funMat = GetFundamentalMatrix(matches, kp1, kp2, mask);
+        std::cout << "HH" << funMat.type() << std::endl;
         const cv::Mat essMat = cameraMat.t() * funMat * cameraMat;
 
         // [Transform Extraction]
@@ -103,7 +101,7 @@ namespace epipolar{
 
         // [Voting R|T]
         std::vector<Point2> q, t;
-        utils::ArrangeMatchPoints(kp1, kp2, matches, q, t);
+        u32 validMatches = utils::ArrangeMatchPoints(kp1, kp2, matches, q, t, mask);
         utils::ToNormalizedSpace(cameraMat, q, -1);
         utils::ToNormalizedSpace(cameraMat, t, -1);
 
@@ -123,15 +121,31 @@ namespace epipolar{
         auto result = voter.elect();
         printf("result: %d %d\n", result.idx, result.score);
 
+        cv::Mat ess_re = utils::CrossMatrix(T.at<real>(0), T.at<real>(1), T.at<real>(2))*R;
+        cv::Mat aa,bb;
+        cv::normalize(essMat, aa, 0, 1, cv::NORM_MINMAX);
+        cv::normalize(ess_re, bb, 0, 1, cv::NORM_MINMAX);
+        //std::cout << aa << std::endl;
+        //std::cout << bb << std::endl;
+
         // [Triangulate 3D Structure]
         misslam::real temp2[12] = {1,0,0,0,0,1,0,0,0,0,1,0};
         cv::Mat M1 = cv::Mat(3, 4, CV_REAL, temp2);
         cv::Mat M2 = utils::CameraPoseByRT(R,T);
-        initStruct.resize(matches.size());
-        for(i32 i=0;i<matches.size();i++){
+
+        initStruct.resize(validMatches);
+        
+        std::vector<cvPoint2> q_, t_;
+        auto qq = utils::ConvertInnerType<cvPoint2>(q);
+        auto tt = utils::ConvertInnerType<cvPoint2>(t);
+        cv::correctMatches(essMat, qq, tt, q_, t_);
+        for(i32 i=0;i<validMatches;i++){
             //std::cout << q[i] << " " << t[i] << std::endl;
-            initStruct[i].point = utils::Triangulate2View(M1, M2, q[i], t[i]);
+            //auto a = cv::Mat(Point3(q_[i], 1)).t() * aa * cv::Mat(Point3(t_[i], 1));
+            //std::cout << a << std::endl;
+            initStruct[i].point = utils::Triangulate2View(M1, M2, q_[i], t_[i]);
             initStruct[i].descriptor = dp2.row(matches[i].trainIdx).clone();
+       
         }
 
         // [Initialize Keyframe]
@@ -145,8 +159,15 @@ namespace epipolar{
         kf2.keyPoints = t;
         kf2.extrinsic = (Matrix4)M2;
 
+        // Draw match
+        cv::namedWindow("test", cv::WINDOW_AUTOSIZE);
+        cv::Mat img_matches;
+        cv::drawMatches(img1, kp1, img2, kp2, matches, img_matches);
+        cv::imshow("test", img_matches);
+
         // Retrun Vote Result
-        return (real)result.score/(real)elecNum;
+        //return (real)result.score/(real)elecNum;
+        return bb;
     }
 }
 }

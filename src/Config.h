@@ -1,6 +1,6 @@
 #ifndef _MISSLAM_CONFIG_H_
 #define _MISSLAM_CONFIG_H_
-
+//define USE_DOUBLE
 #include <cstdint>
 #include <opencv2/opencv.hpp>
 #include <Eigen/Eigen>
@@ -12,7 +12,7 @@ namespace misslam {
     using u32 = uint32_t;
     using i32 = int32_t;
 
-#if USE_DOUBLE
+#if defined(USE_DOUBLE)
     using real = double;
     using cvPoint3 = cv::Point3d;
     using cvPoint2 = cv::Point2d;

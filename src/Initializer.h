@@ -15,14 +15,15 @@ namespace epipolar {
     /*
     * Compute fundamental matrix from matches
     * @param [in] matches vector of DMatch
-    * @param [out] kp1 vector of query keypoints
-    * @param [out] kp2 vector of train keypoints
+    * @param [in] kp1 vector of query keypoints
+    * @param [in] kp2 vector of train keypoints
     * @return Fundamental matrix
     */
     cv::Mat GetFundamentalMatrix(
-        std::vector<cv::DMatch> matches, 
-        std::vector<cv::KeyPoint> kp1, 
-        std::vector<cv::KeyPoint> kp2
+        const std::vector<cv::DMatch> &matches, 
+        const std::vector<cv::KeyPoint> &kp1, 
+        const std::vector<cv::KeyPoint> &kp2,
+        std::vector<uchar> &mask
     );
 
     /*
@@ -44,7 +45,7 @@ namespace epipolar {
         const int &number
     );
 
-    real InitStructByEssential(
+    cv::Mat InitStructByEssential(
         const cv::Mat img1, const cv::Mat img2, const cv::Mat cameraMat,
         map::KeyFrameNode &kf1, map::KeyFrameNode &kf2,
         std::vector<map::StructurePoint> &initStruct
