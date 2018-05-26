@@ -1,6 +1,7 @@
 #include "Utils.h"
 #include "Initializer.h"
 #include "Map.h"
+#include <opencv2/xfeatures2d.hpp>
 
 using namespace std;
 
@@ -82,7 +83,7 @@ namespace epipolar{
     {
         // Initialization
         // [Extract ORB Features]
-        cv::Ptr<cv::ORB> orb = cv::ORB::create();
+        cv::Ptr<cv::xfeatures2d::SIFT> orb = cv::xfeatures2d::SIFT::create();
         std::vector<cv::KeyPoint> kp1, kp2;
         cv::Mat dp1, dp2, mask1, mask2;
         orb->detectAndCompute(img1, mask1, kp1, dp1);
@@ -120,6 +121,8 @@ namespace epipolar{
         voter.push(func4, [&R, &T, R_=R2, T_=T2] () {R=R_; T=T_;});
         auto result = voter.elect();
         printf("result: %d %d\n", result.idx, result.score);
+        std::cout<<R<<std::endl;
+        std::cout<<T<<std::endl;
 
         cv::Mat ess_re = utils::CrossMatrix(T.at<real>(0), T.at<real>(1), T.at<real>(2))*R;
         cv::Mat aa,bb;

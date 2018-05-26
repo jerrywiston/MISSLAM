@@ -2,6 +2,7 @@
 #define _MISSLAM_TRACKER_H_
 
 #include <opencv2/opencv.hpp>
+#include <opencv2/xfeatures2d.hpp>
 #include "Config.h"
 #include "Map.h"
 
@@ -38,8 +39,10 @@ namespace misslam {
             }
             virtual TrackStatus track(const cv::Mat &img, map::GlobalState &gstate) override;
         };
-
+        
         using ORBTracker = TIndirectTracker<cv::ORB>;
+        using SIFTTracker = TIndirectTracker<cv::xfeatures2d::SIFT>;
+        
     }
 }
 

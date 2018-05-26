@@ -20,17 +20,34 @@ struct KeyFrameNode {
     Matrix4 extrinsic;
 };
 
-struct ORBPointDescriptor {
-    uint8_t data[32];
-    ORBPointDescriptor()=default;
-    ORBPointDescriptor(const ORBPointDescriptor &rhs)=default;
+template <size_t N>
+struct PointDescriptor {
+    uint8_t data[N];
+    PointDescriptor()=default;
+    PointDescriptor(const PointDescriptor<N> &rhs)=default;
     operator cv::Mat() const;
-    ORBPointDescriptor(const cv::Mat &mat);
+    PointDescriptor(const cv::Mat &mat);
 };
+template <size_t N>
+PointDescriptor<N>::PointDescriptor(const cv::Mat &mat) {
+    assert(mat.rows == 1 && mat.cols == sizeof(data));
+    std::memcpy(data, mat.ptr<u8>(), sizeof(data));
+}
+template <size_t N>
+PointDescriptor<N>::operator cv::Mat() const
+{
+    using rettype = decltype(data);
+
+    cv::Mat ret(1, sizeof(data), CV_8UC1, const_cast<rettype *>(&data));
+    return ret.clone();
+}
+
+using ORBPointDescriptor = PointDescriptor<32>;
+using SIFTPointDescriptor = PointDescriptor<128>;
 
 struct StructurePoint {
     Point3 point;
-    ORBPointDescriptor descriptor;
+    SIFTPointDescriptor descriptor;
 };
 
 struct GlobalState {
@@ -41,7 +58,7 @@ struct GlobalState {
 
 struct LocalMap {
     std::vector<u32> pidx; 
-    std::vector<ORBPointDescriptor> descriptors;
+    std::vector<SIFTPointDescriptor> descriptors;
 };
 
 }
