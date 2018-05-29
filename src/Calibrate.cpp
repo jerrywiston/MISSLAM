@@ -15,6 +15,8 @@ static void generate_sequence(int count, std::vector<int> &out) {
     for(int i=0; i<count; i++)
         out[i] = i;
 
+    if(count==1)
+        return;
     // shuffle
     for(int i=0; i<count*2; i++) {
         int l, r;
@@ -26,6 +28,9 @@ static void generate_sequence(int count, std::vector<int> &out) {
         std::swap(out[l], out[r]);
     }
 }
+
+namespace misslam {
+namespace calib {
 
 void BundleAdjustment(std::vector<cv::Point2d> &pts1, std::vector<cv::Point2d> &pts2, std::vector<cv::Point3d> &structure, cv::Mat &intrinsic, cv::Mat &extrinsicl, cv::Mat &extrinsicr, int num_matches)
 {
@@ -95,11 +100,12 @@ void BundleAdjustment(std::vector<cv::Point2d> &pts1, std::vector<cv::Point2d> &
 
 }
 
-OneCameraBAProblem::OneCameraBAProblem(int num_camera, int structure_size, cv::Mat intrinsic) 
-    : intrinsic(intrinsic)
+OneCameraBAProblem::OneCameraBAProblem(int num_camera, int structure_size, cv::Mat intrinsic_) 
+    : intrinsic(intrinsic_.clone())
 {
     problem.AddParameterBlock(intrinsic.ptr<double>(), 9);
     structure.reserve(structure_size);
+    extrinsic.reserve(num_camera);
     for(int i=0; i<num_camera; i++)
         addView();
 }
@@ -153,8 +159,8 @@ void OneCameraBAProblem::addCorrespondPoints(const std::vector<int> &cam_indices
 void OneCameraBAProblem::solve()
 {
     ceres::Solver::Options options;
-    options.max_num_iterations = 100;
-    options.linear_solver_type = ceres::SPARSE_SCHUR;
+    options.max_num_iterations = 1000;
+    options.linear_solver_type = ceres::DENSE_SCHUR;
     options.minimizer_progress_to_stdout = true;
     ceres::Solver::Summary summary;
     ceres::Solve(options, &problem, &summary);
@@ -175,4 +181,6 @@ void OneCameraBAProblem::solve()
             << " Time (s): " << summary.total_time_in_seconds << "\n"
             << std::endl;
     }
+}
+}
 }

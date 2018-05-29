@@ -19,6 +19,7 @@ namespace misslam {
             const cv::Mat cvCameraMatrix() const;
         };
         static constexpr PinholeCamera KinectCamera = PinholeCamera(525.0_r, 525.0_r, 319.5_r, 239.5_r);
+        static constexpr PinholeCamera GoproCameraVideo = PinholeCamera(1031.5501099162855_r, 959.5354045716592_r, 1036.7094835167347_r, 525.190190674131_r);
     }
 }
 

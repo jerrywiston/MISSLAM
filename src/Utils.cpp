@@ -27,7 +27,7 @@ std::vector<cv::DMatch> FeatureMatch(cv::Mat dp1, cv::Mat dp2){
 
     std::vector< cv::DMatch > good_matches;
 	for( int i = 0; i < dp1.rows; i++ )
-		if( matches[i].distance < 0.5_r*max_dist )
+		if( matches[i].distance < 0.25_r*max_dist )
 			good_matches.push_back( matches[i]);
     
     return good_matches;
